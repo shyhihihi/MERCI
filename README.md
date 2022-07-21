@@ -36,14 +36,20 @@ Currently MERCI-mtSNP works for 10x scRNA-seq, smart-seq2, RNA-seq, single cell 
 
 ## Example of calling mtSNV from 10x scRNA-seq data:
 **Assume the sample id is X, and Cell Ranger alignment output is generated in directory: /X/cellranger/outs. The path of fasta file is: /refdata-cellranger-mm10-2.1.0/fasta/genome.fa**
-> python MERCI-mtSNP.py -D 10x_scRNA-seq -o /X/output -S X -b /X/ cellranger /outs/possorted_genome_bam.bam -f /refdata-cellranger-mm10-2.1.0/fasta/genome.fa -c /X/outs/filtered_feature_bc_matrix
+> python MERCI-mtSNP.py -D 10x_scRNA-seq \\  
+> -o /X/output \\  
+> -S X \\  
+> -b /X/cellranger/outs/possorted_genome_bam.bam \\  
+> -f /refdata-cellranger-mm10-2.1.0/fasta/genome.fa \\  
+> -c /X/outs/filtered_feature_bc_matrix
 
 ## Example of calling mtSNV from a single cell ATAC-seq data:
 **Also assume the sample id is X, and fastq file is aligned using Bowtie2 to the hg38 reference genome. The path file of alignment .bam file /X/alignment/X.sort.bam. The path of fasta file is: /UCSC/hg38/Sequence/WholeGenomeFasta/genome.fa**
-> python MERCI-mtSNP.py -D scATAC-seq -o /X/output \
--S X \
--b /X/alignment/X.sort.bam \
--f /UCSC/hg38/Sequence/WholeGenomeFasta/genome.fa
+> python MERCI-mtSNP.py -D scATAC-seq \\  
+> -o /X/output \\  
+> -S X \\  
+> -b /X/alignment/X.sort.bam \\  
+> -f /UCSC/hg38/Sequence/WholeGenomeFasta/genome.fa
 
 
 
