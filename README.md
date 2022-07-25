@@ -114,9 +114,14 @@ The statistic Rcm value will be returned. If there is Rcm >1 at any cutoff, this
 
 ![Image text]( https://github.com/shyhihihi/MERCI/blob/main/images/image.png)
 
-For rank cutoffs at top rank 20-70%, the Rcm is consistent > 1. The captured number of positive calls is significant and non-random, true receivers are thus considered included in the input cancer cells. We next selected a cutoff to predict the MT receivers.
+For rank cutoffs at top rank 20-70%, the Rcm is consistent > 1. The captured number of positive calls is significant and non-random, true receivers are thus considered sufficient in the input cancer cells. We next selected a cutoff to predict the MT receivers. Here, we used the cutoff at top rank 50%, which is a good choice to balance the sensitivity, specificity and precision.
+> MTreceiver_pre <- MERCI_ReceiverPre(MTvar_stat_cancerCell, MTfrac_table, top_rank=50)  
 
+Let’s look at the performance of prediction results.
 
+> t.stat <- table(cell_info[Cancer_cells, 'culture_history'], MTreceiver_pre[Cancer_cells, 'prediction'])  
+> t.stat
+![Image text]( https://github.com/shyhihihi/MERCI/blob/main/images/t.stat.png)
 
 
 
