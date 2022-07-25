@@ -148,6 +148,12 @@ Calculated the DNA and RNA ranks for the input mixed cells of cancer (mixed_cell
 
 Also, perform significance estimation first to obtain the Rcm statistics.
  > CellN_stat2 <- CellNumber_test (MTvar_stat_cancerCell2, MTfrac_table2, Number_R=1000)  
-![Image text]( https://github.com/shyhihihi/MERCI/blob/main/images/Rcm_2.jpg)  
+![Image text]( https://github.com/shyhihihi/MERCI/blob/main/images/Rcm_2.jpeg)  
+
 Rcm is consistent > 1 at cutoffs from top rank 20-80%. We next used the same cutoff 50% to predict the mitochondrial receivers.
+> MTreceiver_pre2 <- MERCI_ReceiverPre(MTvar_stat_cancerCell2, MTfrac_table2, top_rank=50)  
+> t.stat2 <- table(cell_info[Cancer_cells, 'culture_history'], MTreceiver_pre2[Cancer_cells, 'prediction'])  
+![Image text]( https://github.com/shyhihihi/MERCI/blob/main/images/t.stat2.jpg)
+
+Compared to the results of prediction without reference data (the results of MERCI LOO pipeline), we can easily find the performance improved with precision = 82%, sensitivity = 72%, and specificity = 90%. But it is enough for using the MERCI LOO pipeline if the user does not have additional reference data.
 
