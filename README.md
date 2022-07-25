@@ -120,10 +120,10 @@ For rank cutoffs at top rank 20-70%, the Rcm is consistent > 1. The captured num
 Let’s look at the performance of prediction results.
 
 > t.stat <- table(cell_info[Cancer_cells, 'culture_history'], MTreceiver_pre[Cancer_cells, 'prediction'])  
-> t.stat
-![Image text]( https://github.com/shyhihihi/MERCI/blob/main/images/t.stat.png)
+> t.stat  
+![Image text]( https://github.com/shyhihihi/MERCI/blob/main/images/t.stat.jpg)
 
-
+The precision (also called positive predictive value) reached > 76%. Sensitivity and specificity are 89% and 61%. If we selected a more rigorous cutoff (e.g. top 40% or higher), the precision and specificity will increase at the cost of reduced sensitivity.
 
 
 
