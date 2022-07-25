@@ -61,7 +61,7 @@ The *.MT_variants.txt contains the annotated information of retrieved mtSNVs, *.
 ## MERCI R package
 ### Install MERCI package
 > library(devtools)  
-> install_github('shyhihihi/Cat/SecondPackage')  
+> install_github(repo='shyhihihi/MERCI/MERCI')  
 
 ___*Note: When the system reminds you to update dependent packages, we recommend to not update___
 ### Usage
