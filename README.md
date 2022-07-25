@@ -3,7 +3,7 @@ MERCI contains two modules:MERCI-mtSNP.py for calling mtSNVs and MERCI R package
 
 ## MERCI-mtSNP
 
-**MERCI-mtSNP is written in Python3, with the following dependencies: 
+**MERCI-mtSNP is written in Python3, with the following dependencies:** 
 
 - pandas
 - numpy
@@ -57,6 +57,10 @@ ___*Note: if the folder of .bam file does not contain its .bai index file, the u
 The output directory contains two main output files: *.MT_variants.txt and *.MT_Coverage.csv file (*.Coverage_Cell.csv for 10x scRNA-seq data).  
 The *.MT_variants.txt contains the annotated information of retrieved mtSNVs, *.MT_Coverage.csv or *.Coverage_Cell.csv records the coverage information in mitochondrial genome for each cell or sample.
 
+## MERCI R package
+### install package
+library(devtools)
+install_github('shyhihihi/Cat/SecondPackage') ;
 
 
 
