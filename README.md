@@ -51,9 +51,11 @@ Currently MERCI-mtSNP works for 10x scRNA-seq, smart-seq2, RNA-seq, single cell 
 > -b /X/alignment/X.sort.bam \\  
 > -f /UCSC/hg38/Sequence/WholeGenomeFasta/genome.fa
 
+___*Note: if the folder of .bam file does not contain its .bai index file, the user needs first to generate .bai file. For example using a simple command of samtools to create the bam index file: samtools index *.bam.___
 
-
-
+## Output files:
+The output directory contains two main output files: *.MT_variants.txt and *.MT_Coverage.csv file (*.Coverage_Cell.csv for 10x scRNA-seq data).  
+The *.MT_variants.txt contains the annotated information of retrieved mtSNVs, *.MT_Coverage.csv or *.Coverage_Cell.csv records the coverage information in mitochondrial genome for each cell or sample.
 
 
 
