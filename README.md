@@ -63,7 +63,7 @@ The *.MT_variants.txt contains the annotated information of retrieved mtSNVs, *.
 > library(devtools)  
 > install_github(repo='shyhihihi/MERCI/MERCI')  
 
-___*Note: When the system reminds you to update dependent packages, we recommend to not update___
+___*Note: When the system reminds you to update dependent packages, we recommend not to update___
 ### Usage
 **This text will use a benchmark example data to illustrate how to use MERCI package**  
 After the MERCI package is successfully installed, load the package.
