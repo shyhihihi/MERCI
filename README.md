@@ -76,6 +76,7 @@ varFile is the path of *.MT_variants.txt’, and minReads=1000 indicates that on
 > varFile  <- '. / XXX.MT_variants.txt'  
 > MT_variants <- readMTvar(varFile, cellname = "XXX") 
 
+**We first show how to run MERCI LOO pipeline, which means there is no reference data of non-receivers provided**  
 Assuming T cells are MT donor cells and the population of cancer cells is a mixture of receivers and non-receivers. In this example data, we mixed 300 CC (receiver) and 500 MC (non-receiver) cancer cells. Load the cell information data:
 > load('. /cell_info.RData')  
 > T_cells <- cell_info$cell_name[cell_info$cell_type=='T cell']  
@@ -109,8 +110,11 @@ MERCI_LOO_MT_est will give the estimated MT constitutes for all potential receiv
 Significance estimation to test if true-receivers are included based on Rcm values.
 > CellN_stat <- CellNumber_test(MTvar_stat_cancerCell, MTfrac_table, Number_R=1000)  
 
-The statistic Rcm value will be returned, if Rcm >1, which means receivers are high likely to be sufficiently included in the input mixed cells. Let’s look at the results:
+The statistic Rcm value will be returned. If there is Rcm >1 at any cutoff, this means receivers are high likely to be sufficiently included in the input mixed cells. Let’s look at the results:
 
+![Image text]( https://github.com/shyhihihi/MERCI/blob/main/images/image.png)
+
+For rank cutoffs at top rank 20-70%, the Rcm is consistent > 1. The captured number of positive calls is significant and non-random, true receivers are thus considered included in the input cancer cells. We next selected a cutoff to predict the MT receivers.
 
 
 
