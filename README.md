@@ -53,9 +53,10 @@ Currently MERCI-mtSNP works for 10x scRNA-seq, smart-seq2, RNA-seq, single cell 
 
 ___*Note: if the folder of .bam file does not contain its .bai index file, the user needs first to generate .bai file. For example using a simple command of samtools to create the bam index file: samtools index *.bam.___
 
-## Output files:
+### Output files:
 The output directory contains two main output files: *.MT_variants.txt and *.MT_Coverage.csv file (*.Coverage_Cell.csv for 10x scRNA-seq data).  
 The *.MT_variants.txt contains the annotated information of retrieved mtSNVs, *.MT_Coverage.csv or *.Coverage_Cell.csv records the coverage information in mitochondrial genome for each cell or sample.
+
 
 ## MERCI R package
 ### Install MERCI package
@@ -76,6 +77,7 @@ varFile is the path of *.MT_variants.txt’, and minReads=1000 indicates that on
 > varFile  <- '. / XXX.MT_variants.txt'  
 > MT_variants <- readMTvar(varFile, cellname = "XXX") 
 
+### MERCI LOO for real-world application
 **We first show how to run MERCI LOO pipeline, which means there is no reference data of non-receivers provided**  
 Assuming T cells are MT donor cells and the population of cancer cells is a mixture of receivers and non-receivers. In this example data, we mixed 300 CC (receiver) and 500 MC (non-receiver) cancer cells. Load the cell information data:
 > load('. /cell_info.RData')  
@@ -125,6 +127,27 @@ Let’s look at the performance of prediction results.
 
 The precision (also called positive predictive value) reached > 76%. Sensitivity and specificity are 89% and 61%. If we selected a more rigorous cutoff (e.g. top 40% or higher), the precision and specificity will increase at the cost of reduced sensitivity.
 
+### MERCI regular
+**If there is reference data provided, we recommond to use regular MERCI pipelinee as isllustrated below:**  
+Load the independent reference data of pure non-receivers of cancer cells (additional MC cells), including the cell annotation data and gene expression data.
+> load(‘./cell_info_nonReceivers.RData’)  
+> load(‘./cell_exp_nonReceivers.RData’)  
+> ref_noRe_cells <- cell_info_nonReceivers$cell_name  
+> selected_Cells <- c(T_cells, Cancer_cells, ref_noRe_cells)  
+> c.genes <- intersect(rownames(cell_exp), rownames(cell_exp_nonReceivers)) ;
+> cell_exp2 <- cbind(cell_exp[c.genes, ], cell_exp_nonReceivers[c.genes, ]) ;
 
+Read the file of mitochondrial read-coverage based on selected cells, and generate the corresponding vaf matrix for mtSNVs.
+> MTcoverage_inf <- readCoverage_10x(CoverFile, S.cells=selected_Cells)  
+> s.mtSNV_table <- mtSNV_table[mtSNV_table$Cell%in%selected_Cells, ]  
+> mtSNV_ma2 <- MTmutMatrix_refined(MT_variants=s.mtSNV_table, coverage=MTcoverage_inf)  
 
+Calculated the DNA and RNA ranks for the input mixed cells of cancer (mixed_cells), using the data of T cells and new loaded non-receivers as reference.
+> MTvar_stat_cancerCell2 <- MERCI_MTvar_cal(mtSNV_ma2, MTcoverage_inf, donor_cells=T_cells, mixed_cells=Cancer_cells, Ref_nonReceivers=ref_noRe_cells, min_d=5, min_observeRate= 0.1, Nmut_min=2, pvalue=0.05, qvalue=0.1, OR=1)  
+> MTfrac_table2 <- MERCI_MT_est(cell_exp2, mixed_cells=Cancer_cells, donor_cells=T_cells, Ref_nonReceivers=ref_noRe_cells, organism='mouse')  
+
+Also, perform significance estimation first to obtain the Rcm statistics.
+ > CellN_stat2 <- CellNumber_test (MTvar_stat_cancerCell2, MTfrac_table2, Number_R=1000)  
+![Image text]( https://github.com/shyhihihi/MERCI/blob/main/images/Rcm_2.jpg)  
+Rcm is consistent > 1 at cutoffs from top rank 20-80%. We next used the same cutoff 50% to predict the mitochondrial receivers.
 
