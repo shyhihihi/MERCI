@@ -128,7 +128,7 @@ Let’s look at the performance of prediction results.
 The precision (also called positive predictive value) reached > 76%.  specificity and sensitivity are 89% and 61%. If we selected a more rigorous cutoff (e.g. top 40% or higher), the precision and specificity will increase at the cost of reduced sensitivity.
 
 ### MERCI regular
-**If there is reference data provided, we recommond to use regular MERCI pipelinee as isllustrated below:**  
+**If there is reference data provided, we recommond to use regular MERCI pipeline as isllustrated below:**  
 Load the independent reference data of pure non-receivers of cancer cells (additional MC cells), including the cell annotation data and gene expression data.
 > load(‘./cell_info_nonReceivers.RData’)  
 > load(‘./cell_exp_nonReceivers.RData’)  
