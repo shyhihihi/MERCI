@@ -125,7 +125,7 @@ Let’s look at the performance of prediction results.
 > t.stat  
 ![Image text]( https://github.com/shyhihihi/MERCI/blob/main/images/t.stat.jpg)
 
-The precision (also called positive predictive value) reached > 76%. Sensitivity and specificity are 89% and 61%. If we selected a more rigorous cutoff (e.g. top 40% or higher), the precision and specificity will increase at the cost of reduced sensitivity.
+The precision (also called positive predictive value) reached > 76%.  specificity and sensitivity are 89% and 61%. If we selected a more rigorous cutoff (e.g. top 40% or higher), the precision and specificity will increase at the cost of reduced sensitivity.
 
 ### MERCI regular
 **If there is reference data provided, we recommond to use regular MERCI pipelinee as isllustrated below:**  
