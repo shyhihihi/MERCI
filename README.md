@@ -139,7 +139,7 @@ Load the independent reference data of pure non-receivers of cancer cells (addit
 > load(‘./cell_exp_nonReceivers.RData’)  
 > ref_noRe_cells <- cell_info_nonReceivers$cell_name  
 > selected_Cells <- c(T_cells, Cancer_cells, ref_noRe_cells)  
-> c.genes <- intersect(rownames(cell_exp), rownames(cell_exp_nonReceivers)) ;
+> c.genes <- intersect(rownames(cell_exp), rownames(cell_exp_nonReceivers)) ;  
 > cell_exp2 <- cbind(cell_exp[c.genes, ], cell_exp_nonReceivers[c.genes, ]) ;
 
 Read the file of mitochondrial read-coverage based on selected cells, and generate the corresponding vaf matrix for mtSNVs.
