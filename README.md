@@ -109,10 +109,10 @@ Next, we calculate the ‘effective count statistic’(Neff)  of donor cell enri
 The parameter ‘adjust’ of Cell_Neff_cal indicates whether adjusting the count statistics into Neff statistics. when adjust=FALSE, then the original count of observed donor-enriched mtSNV in each candidate receiver cell will be used to calculate the DNA rank. Otherwise, Neff will be used as the count statistics for DNA rank calculation, default=TRUE. Notably, When using Neff to calculate DNA rank score, it will take a long time to get the results depending on the number of ‘mixed_cells’ and the number of ‘mutFeatures’.  
 
 Load gene expression data (must include the MT genes), Using MERCI LOO pipeline to estiamte the donor and reciever MT contents (decovolution analysis), and RNA ranks for each cancer cell.
-> load('./cell_exp.RData')
+> load('./cell_exp.RData')  
 > library(Matrix)  
 > cell_exp <- cell_exp[, selected_Cells]  
-> RNA_rank <- MERCI_LOO_MT_est(cell_exp, reciever_cells=Cancer_cells, donor_cells=T_cells, organism='mouse') ;
+> RNA_rank <- MERCI_LOO_MT_est(cell_exp, reciever_cells=Cancer_cells, donor_cells=T_cells, organism='mouse')  
 
 MERCI_LOO_MT_est will return the estimated MT constitutes for all candidate receiver cells and the transformed RNA ranks. The parameter ‘organism’ should set accurate, currently, we only support Human and mouse species.  
 Significance estimation to test if true-receivers are included based on Rcm values.
