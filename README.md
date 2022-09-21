@@ -120,23 +120,23 @@ Significance estimation to test if true-receivers are included based on Rcm valu
 
 The statistic Rcm value will be returned. If there is Rcm >1 at any cutoff, this means receivers are high likely to be sufficiently included in the input mixed cells. Let’s look at the results:
 
-![Image text]( https://github.com/shyhihihi/MERCI/blob/main/images/image.png)
+![Image text]( https://github.com/shyhihihi/MERCI/blob/main/images/MERCIv2_LOO_Rcm.jpeg)
 
-For rank cutoffs at top rank 20-70%, the Rcm is consistent > 1. The captured number of positive calls is significant and non-random, true receivers are thus considered sufficient in the input cancer cells. We next selected a cutoff to predict the MT receivers. Here, we used the cutoff at top rank 50%, which is a good choice to balance the sensitivity, specificity and precision.
-> MTreceiver_pre <- MERCI_ReceiverPre(MTvar_stat_cancerCell, MTfrac_table, top_rank=50)  
+For rank cutoffs at top rank 10-80%, the Rcm is consistent > 1. The captured number of positive calls is significant and non-random, true receivers are thus considered sufficient in the input cancer cells. We next selected a cutoff to predict the MT receivers. Here, we used the cutoff at top rank 50%, which is a good choice to balance the sensitivity, specificity and precision.
+> MTreceiver_pre <- MERCI_ReceiverPre(DNA_rank, RNA_rank, top_rank=50)  
 
 **The prediction task is completed here.**  
 Let’s look at the performance of prediction results.
 
 > t.stat <- table(cell_info[Cancer_cells, 'culture_history'], MTreceiver_pre[Cancer_cells, 'prediction'])  
 > t.stat  
-![Image text]( https://github.com/shyhihihi/MERCI/blob/main/images/t.stat.jpg)
+![Image text]( https://github.com/shyhihihi/MERCI/blob/main/images/MERCIv2_t.stat.jpg)
 
 According to the equations blelow:  
-Precision=TP/(TP+FP)=184/(184+57)=76.3%  
-Specificity=TN/(TN+FP)=443/(443+57)=88.6%  
-Sensitivity=TP/(TP+FN)=184/(184+116)=61.3%  
-The precision (also called positive predictive value) reached > 76%.  specificity and sensitivity are 89% and 61%. If we selected a more rigorous cutoff (e.g. top 40% or higher), the precision and specificity will increase at the cost of reduced sensitivity.
+Precision=TP/(TP+FP)=226/(226+41)=84.6%  
+Specificity=TN/(TN+FP)=459/(459+41)=91.8%  
+Sensitivity=TP/(TP+FN)=226/(226+74)=75.3%  
+The precision (also called positive predictive value) reached > 84%. Specificity and sensitivity are 92% and 75%. If we selected a more rigorous cutoff (e.g. top 40% or higher), the precision and specificity will increase at the cost of reduced sensitivity.
 
 ### MERCI regular
 **If there is reference data provided, we recommond to use regular MERCI pipeline as isllustrated below:**  
@@ -151,20 +151,23 @@ Load the independent reference data of pure non-receivers of cancer cells (addit
 Read the file of mitochondrial read-coverage based on selected cells, and generate the corresponding vaf matrix for mtSNVs.
 > MTcoverage_inf <- readCoverage_10x(CoverFile, S.cells=selected_Cells)  
 > s.mtSNV_table <- mtSNV_table[mtSNV_table$Cell%in%selected_Cells, ]  
-> mtSNV_ma2 <- MTmutMatrix_refined(MT_variants=s.mtSNV_table, coverage=MTcoverage_inf)  
+> mtSNV_ma2 <- MTmutMatrix_transform(MT_variants=s.mtSNV_table, MT_coverage=MTcoverage_inf, donor_cells=T_cells, mixed_cells=Cancer_cells, Ref_nonReceivers = ref_noRe_cells, min_d=5, min_observeRate= 0.1)  
 
 Calculated the DNA and RNA ranks for the input mixed cells of cancer (mixed_cells), using the data of T cells and new loaded non-receivers as reference.
-> MTvar_stat_cancerCell2 <- MERCI_MTvar_cal(mtSNV_ma2, MTcoverage_inf, donor_cells=T_cells, mixed_cells=Cancer_cells, Ref_nonReceivers=ref_noRe_cells, min_d=5, min_observeRate= 0.1, Nmut_min=2, pvalue=0.05, qvalue=0.1, OR=1)  
-> MTfrac_table2 <- MERCI_MT_est(cell_exp2, mixed_cells=Cancer_cells, donor_cells=T_cells, Ref_nonReceivers=ref_noRe_cells, organism='mouse')  
+> s.muts <- Denrich_mtMut_extr(varMatrix=mtSNV_ma2, donor_cells=T_cells, mixed_cells=Cancer_cells, Ref_nonReceivers=ref_noRe_cells, OR=2, Nmut_min=2)  
+> DNA_rank2 <- Cell_Neff_cal(varMatrix=mtSNV_ma2, MT_variants=s.mtSNV_table, MT_coverage=MTcoverage_inf, donor_cells=T_cells, mixed_cells=Cancer_cells, Ref_nonReceivers = ref_noRe_cells, mutFeatures=s.muts, adjust=FALSE)  
+> RNA_rank2 <- MERCI_MT_est(cell_exp2, mixed_cells=Cancer_cells, donor_cells=T_cells, Ref_nonReceivers=ref_noRe_cells, organism='mouse')  
 
 Also, perform significance estimation first to obtain the Rcm statistics.
- > CellN_stat2 <- CellNumber_test (MTvar_stat_cancerCell2, MTfrac_table2, Number_R=1000)  
-![Image text]( https://github.com/shyhihihi/MERCI/blob/main/images/Rcm_2.jpeg)  
+> CellN_stat2 <- CellNumber_test(DNA_rank2, RNA_rank2, Number_R=1000)   
+![Image text]( https://github.com/shyhihihi/MERCI/blob/main/images/MERCIv2_regular_Rcm.jpeg)  
 
-Rcm is consistent > 1 at cutoffs from top rank 20-80%. We next used the same cutoff 50% to predict the mitochondrial receivers.
-> MTreceiver_pre2 <- MERCI_ReceiverPre(MTvar_stat_cancerCell2, MTfrac_table2, top_rank=50)  
+Rcm is consistent > 1 at cutoffs from top rank 10-80%. We next used the same cutoff 50% to predict the mitochondrial receivers.
+> MTreceiver_pre2 <- MERCI_ReceiverPre(DNA_rank2, RNA_rank2, top_rank=50)  
 > t.stat2 <- table(cell_info[Cancer_cells, 'culture_history'], MTreceiver_pre2[Cancer_cells, 'prediction'])  
-![Image text]( https://github.com/shyhihihi/MERCI/blob/main/images/t.stat2.jpg)
+> t.stat2  
+![Image text]( https://github.com/shyhihihi/MERCI/blob/main/images/MERCIv2_t.stat2.jpg)
 
-Compared to the results of prediction without reference data (the results of MERCI LOO pipeline), we can easily find the performance improved with precision = 82%, sensitivity = 72%, and specificity = 90%. But it is enough for using the MERCI LOO pipeline if the user does not have additional reference data.
+
+Compared to the results of prediction without reference data (the results of MERCI LOO pipeline), we can easily find the performance improved significantly with sensitivity = 79%. At the same time, there is nearly no change of precision (85%) and specificity (91%). It is ok for using the MERCI LOO pipeline if the user does not have additional reference data.
 
