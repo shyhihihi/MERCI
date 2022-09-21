@@ -160,6 +160,7 @@ Calculated the DNA and RNA ranks for the input mixed cells of cancer (mixed_cell
 
 Also, perform significance estimation first to obtain the Rcm statistics.
 > CellN_stat2 <- CellNumber_test(DNA_rank2, RNA_rank2, Number_R=1000)   
+
 ![Image text]( https://github.com/shyhihihi/MERCI/blob/main/images/MERCIv2_regular_Rcm.jpeg)  
 
 Rcm is consistent > 1 at cutoffs from top rank 10-80%. We next used the same cutoff 50% to predict the mitochondrial receivers.
