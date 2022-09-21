@@ -93,24 +93,30 @@ Also, readCoverage_10x function works only for the coverage file of 10x scRNA-se
 > CoverFile <- './XXX.MT_Coverage.csv'  
 > MT_cov <- readCoverage(CoverFile)  
 
-Create mtSNV vaf matrix (variants * cells)
+Preprocess the MT mutation data and generate a mtSNV vaf matrix (variants * cells)
 > s.mtSNV_table <- mtSNV_table[mtSNV_table$Cell%in%selected_Cells, ]  
-> mtSNV_ma <- MTmutMatrix_refined(MT_variants=s.mtSNV_table, coverage=MTcoverage_inf)  
+> mtSNV_ma <- MTmutMatrix_transform(MT_variants=s.mtSNV_table, MT_coverage=MTcoverage_inf, donor_cells=T_cells, mixed_cells=Cancer_cells, min_d=5, min_observeRate= 0.1)   
 
-We focus on the T cells (potential donor cells) and cancer cells (potential receiver cells). For these selected cells, we get the VAF matrix of their mtSNVs (mtSNV_ma).  
-Next, we calculate the number of donor cell enriched mtSNVs and the DNA ranks for candidate recievers (mixed cancer cells).
-> MTvar_stat_cancerCell <- MERCI_MTvar_cal(mtSNV_ma, MTcoverage_inf, donor_cells=T_cells, mixed_cells=Cancer_cells, min_d=5, min_observeRate= 0.1, Nmut_min=2, pvalue=0.05, qvalue=0.1, OR=2)  
+We focus on the T cells (potential donor cells) and cancer cells (potential receiver cells).   
+For these selected cells, we get the VAF matrix of their mtSNVs (mtSNV_ma).    
+Next, we identify the donor cell (T cell) enriched mtSNVs
+> s.muts <- Denrich_mtMut_extr(varMatrix=mtSNV_ma, donor_cells=T_cells, mixed_cells=Cancer_cells, OR=2, Nmut_min=2)
 
-For the parameters of MERCI_MTvar_cal function, such as min_d, min_observeRate, Nmut_min, pvalue, qvalue and OR, please type help (MERCI_MTvar_cal) to check them. The users can change the parameters according to their preferences.  
+Here, to get features (MT variants) as many as possible for downstream prediction, we only set the Odds Ratio (T cell vs Cancer cell) > 2 and leave  p and q values alone.  
+Next, we calculate the ‘effective count statistic’(Neff)  of donor cell enriched mtSNVs and the DNA ranks for all candidate receivers (mixed cancer cells).  
+> DNA_rank <- Cell_Neff_cal(varMatrix=mtSNV_ma, MT_variants=s.mtSNV_table, MT_coverage=MTcoverage_inf, donor_cells=T_cells, mixed_cells=Cancer_cells, mutFeatures=s.muts, adjust=FALSE) ;
+
+The parameter ‘adjust’ of Cell_Neff_cal indicates whether adjusting the count statistics into Neff statistics. when adjust=FALSE, then the original count of observed donor-enriched mtSNV in each candidate receiver cell will be used to calculate the DNA rank. Otherwise, Neff will be used as the count statistics for DNA rank calculation, default=TRUE. Notably, When using Neff to calculate DNA rank score, it will take a long time to get the results depending on the number of ‘mixed_cells’ and the number of ‘mutFeatures’.  
+
 Load gene expression data (must include the MT genes), Using MERCI LOO pipeline to estiamte the donor and reciever MT contents (decovolution analysis), and RNA ranks for each cancer cell.
 > load('./cell_exp.RData')
 > library(Matrix)  
 > cell_exp <- cell_exp[, selected_Cells]  
-> MTfrac_table <- MERCI_LOO_MT_est(cell_exp, reciever_cells=Cancer_cells, donor_cells=T_cells, organism='mouse') ;
+> RNA_rank <- MERCI_LOO_MT_est(cell_exp, reciever_cells=Cancer_cells, donor_cells=T_cells, organism='mouse') ;
 
-MERCI_LOO_MT_est will give the estimated MT constitutes for all potential receiver cells and their RNA ranks. The organism should be noted to be accurate, currently, we only support Human and mouse species.
+MERCI_LOO_MT_est will return the estimated MT constitutes for all candidate receiver cells and the transformed RNA ranks. The parameter ‘organism’ should set accurate, currently, we only support Human and mouse species.  
 Significance estimation to test if true-receivers are included based on Rcm values.
-> CellN_stat <- CellNumber_test(MTvar_stat_cancerCell, MTfrac_table, Number_R=1000)  
+> CellN_stat <- CellNumber_test(DNA_rank, RNA_rank, Number_R=1000);
 
 The statistic Rcm value will be returned. If there is Rcm >1 at any cutoff, this means receivers are high likely to be sufficiently included in the input mixed cells. Let’s look at the results:
 
