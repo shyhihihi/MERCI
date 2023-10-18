@@ -131,7 +131,7 @@ Let’s look at the performance of prediction results.
 
 > t.stat <- table(cell_info[Cancer_cells, 'culture_history'], MTreceiver_pre[Cancer_cells, 'prediction'])  
 > t.stat  
-![Image text]( https://github.com/shyhihihi/MERCI/blob/main/images/MERCIv2_t.stat.jpg)
+![Image text](https://github.com/shyhihihi/MERCI/blob/main/images/MERCIv2_t.stat.jpg)
 
 According to the equations blelow:  
 Precision=TP/(TP+FP)=226/(226+41)=84.6%  
@@ -168,7 +168,7 @@ Rcm is consistent > 1 at cutoffs from top rank 10-80%. We next used the same cut
 > MTreceiver_pre2 <- MERCI_ReceiverPre(DNA_rank2, RNA_rank2, top_rank=50)  
 > t.stat2 <- table(cell_info[Cancer_cells, 'culture_history'], MTreceiver_pre2[Cancer_cells, 'prediction'])  
 > t.stat2  
-![Image text]( https://github.com/shyhihihi/MERCI/blob/main/images/MERCIv2_t.stat2.jpg)
+![Image text](https://github.com/shyhihihi/MERCI/blob/main/images/MERCIv2_t.stat2.jpg)
 
 
 Compared to the results of prediction without reference data (the results of MERCI LOO pipeline), we can easily find the performance improved significantly with sensitivity = 79%. At the same time, there is nearly no change of precision (85%) and specificity (91%). It is ok for using the MERCI LOO pipeline if the user does not have additional reference data.
