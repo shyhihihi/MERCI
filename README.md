@@ -130,7 +130,8 @@ For rank cutoffs at top rank 10-80%, the Rcm is consistent > 1. The captured num
 Let’s look at the performance of prediction results.
 
 > t.stat <- table(cell_info[Cancer_cells, 'culture_history'], MTreceiver_pre[Cancer_cells, 'prediction'])  
-> t.stat  
+> t.stat
+
 ![Image text](https://github.com/shyhihihi/MERCI/blob/main/images/MERCIv2_t.stat.jpg)
 
 According to the equations blelow:  
@@ -168,6 +169,7 @@ Rcm is consistent > 1 at cutoffs from top rank 10-80%. We next used the same cut
 > MTreceiver_pre2 <- MERCI_ReceiverPre(DNA_rank2, RNA_rank2, top_rank=50)  
 > t.stat2 <- table(cell_info[Cancer_cells, 'culture_history'], MTreceiver_pre2[Cancer_cells, 'prediction'])  
 > t.stat2  
+
 ![Image text](https://github.com/shyhihihi/MERCI/blob/main/images/MERCIv2_t.stat2.jpg)
 
 
