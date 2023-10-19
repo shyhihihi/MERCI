@@ -18,7 +18,7 @@ Please make sure all dependency modules are installed before usiung MERCI-mtSNP.
 | Parameters | Description |
 | ------------- | ------------- |
 | -h, --help | show this help message and exit |
-| -D DATATYPE, --dataType=DATATYPE | The data type of sequencing data. One of '10x_scRNA-seq'(default), '10x_mtscATAC-seq', 'smart-seq2', 'bulk_ATAC-seq', 'scATAC-seq', or 'bulk_RNA-seq'. |
+| -D DATATYPE, --dataType=DATATYPE | The data type of sequencing data. The sequencing data can be of various types, including '10x_scRNA-seq' (default), '10x_mtscATAC-seq', 'smart-seq2', 'bulk_ATAC-seq', 'scATAC-seq', and 'bulk_RNA-seq'.". |
 | -o DIRECTORY, --output=DIRECTORY | Output directory for intermediate and final outputs. |
 | -S SAMPLEID , --sampleID=SAMPLEID | the sample identifier, also serve as the prefix of output file. if not given, the names of all intermediate or final output files will be automatically set as sampleX. |
 | -b PATH_BAM, --Bamfile=PATH_BAM | Input bam file for MT mutation calling |
