@@ -44,7 +44,6 @@ python MERCI-mtSNP.py -D 10x_scRNA-seq \
 -b /X/cellranger/outs/possorted_genome_bam.bam \
 -f /refdata-cellranger-mm10-2.1.0/fasta/genome.fa \
 -c /X/outs/filtered_feature_bc_matrix
-
 ```
 
 ### Example of calling mtSNV from a single cell ATAC-seq data:
@@ -56,7 +55,6 @@ python MERCI-mtSNP.py -D scATAC-seq \
 -S X \
 -b /X/alignment/X.sort.bam \
 -f /UCSC/hg38/Sequence/WholeGenomeFasta/genome.fa
-
 ```
 
 ___*Note: if the folder of .bam file does not contain its .bai index file, the user needs first to generate .bai file. For example using a simple command of samtools to create the bam index file: samtools index *.bam.___
