@@ -46,7 +46,7 @@ python MERCI-mtSNP.py -D 10x_scRNA-seq \
 -c /X/outs/filtered_feature_bc_matrix
 ```
 
-### Example of calling mtSNV from a single cell ATAC-seq data (same for bulk ATAC-seq  data):
+### Example of calling mtSNV from single cell ATAC-seq data:
 **Also assume the sample id is X, and fastq file is aligned using Bowtie2 to the hg38 reference genome. The path of alignment .bam file /X/alignment/X.sort.bam. The path of fasta file is: /UCSC/hg38/Sequence/WholeGenomeFasta/genome.fa**
 
 ```
@@ -57,8 +57,8 @@ python MERCI-mtSNP.py -D scATAC-seq \
 -f /UCSC/hg38/Sequence/WholeGenomeFasta/genome.fa
 ```
 
-### Example of calling mtSNV from a single cell RNA-seq data derived form smart-seq2 protocol (same for bulk RNA-seq data):
-**the sample id is X, and fastq file is aligned using STAR to the hg38 human reference genome. The path of alignment .bam file /X/alignment/X.out.bam. The path of fasta file is: /GRCh38/Homo_sapiens.GRCh38.dna.primary_assembly.fa**
+### Example of calling mtSNV from single cell RNA-seq data with smart-seq2 protocol:
+**Assume the sample id is X, and fastq file is aligned using STAR to the hg38 human reference genome. The path of alignment .bam file /X/alignment/X.out.bam. The path of fasta file is: /GRCh38/Homo_sapiens.GRCh38.dna.primary_assembly.fa**
 
 ```
 python MERCI-mtSNP.py -D smart-seq2 \ 
@@ -68,19 +68,8 @@ python MERCI-mtSNP.py -D smart-seq2 \
 -f /GRCh38/Homo_sapiens.GRCh38.dna.primary_assembly.fa
 ```
 
-### Example of calling mtSNV from a single cell RNA-seq data derived form smart-seq2 protocol (same for bulk RNA-seq data):
-**the sample id is X, and fastq file is aligned using STAR to the hg38 human reference genome. The path of alignment .bam file /X/alignment/X.out.bam. The path of fasta file is: /GRCh38/Homo_sapiens.GRCh38.dna.primary_assembly.fa**
-
-```
-python MERCI-mtSNP.py -D smart-seq2 \ 
--o /X/output \ 
--S X \
--b /X/alignment/X.out.bam \
--f /GRCh38/Homo_sapiens.GRCh38.dna.primary_assembly.fa
-```
-
-### Example of calling mtSNV from a 10x mtscATAC-seq(PMID:32788668) data:
-**the sample id is X, and fastq file is aligned using Cell Ranger ATAC pipeline to the mm10 mouse reference genome. The output of Cell Ranger ATAC is generated in directory: /X/cellrangerATAC/outs. 
+### Example of calling mtSNV from 10x mtscATAC-seq(PMID:32788668) data:
+**Assume the sample id is X, and fastq file is aligned using Cell Ranger ATAC pipeline to the mm10 mouse reference genome. The output of Cell Ranger ATAC is generated in directory: /X/cellrangerATAC/outs. 
 The path of fasta file is: /refdata-cellranger-arc-mm10-2020-A-2.0.0/fasta/genome.fa**
 
 ```
