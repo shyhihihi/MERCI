@@ -86,9 +86,7 @@ python MERCI-mtSNP.py -D 10x_mtscATAC-seq \
 ___*Note: If the folder of .bam file does not contain its .bai index file, the user needs first to generate .bai file. For example using a simple command of samtools to create the bam index file: samtools index *.bam.___
 
 ### Output files:
-The output directory contains two main output files: *.MT_variants.txt and *.MT_Coverage.csv file (*.Coverage_Cell.csv for 10x scRNA-seq or mtscATAC-seq data).  
-The *.MT_variants.txt contains the annotated information of retrieved mtSNVs, *.MT_Coverage.csv or *.Coverage_Cell.csv file records the coverage information in mitochondrial genome for each cell or sample.
-
+The output directory contains two main output files: *.MT_variants.txt and *.MT_Coverage.csv file (*.Coverage_Cell.csv for 10x scRNA-seq or mtscATAC-seq data). The *.MT_variants.txt contains the annotated information of retrieved mtSNVs, *.MT_Coverage.csv or *.Coverage_Cell.csv file records the coverage information in mitochondrial genome for each cell or sample.
 
 
 ## MERCI R package
@@ -104,18 +102,19 @@ After the MERCI package is successfully installed, load the package.
 
 `library(MERCI)`
 
-Read the file of mitochondrial variants (*.MT_variants.txt’) called from MERCI-mtSNP. Here I prepared an example data ‘example.MT_variants.txt’. (Users can find the dataset of example files in https://github.com/shyhihihi/MERCI/tree/main/data)
+Read the file of mitochondrial variants (*.MT_variants.txt’) called from MERCI-mtSNP into R environment. Here I prepared an example data ‘example.MT_variants.txt’. (Users can find the dataset of example files in https://github.com/shyhihihi/MERCI/tree/main/data)
 ```
 varFile  <- './example.MT_variants.txt' ;  
 mtSNV_table <- readMTvar_10x(varFile, minReads=1000) ;  
 ```
-varFile is the path of *.MT_variants.txt’, and minReads=1000 indicates that only Cell with MT reads > 1000 will be returned. readMTvar_10x  function works only for the variant file of 10x scRNA-seq data. If the user used other datatypes, such as ATAC-seq, smart-seq2 or bulk RNA-seq, etc., please use the code below:
+Here, varFile is the path of '*.MT_variants.txt' file, and minReads=1000 indicates that only Cell with MT reads < 1000 will be filtered out. readMTvar_10x  function works only for the variant file of 10x scRNA-seq data. If the user used other datatypes, such as ATAC-seq, smart-seq2 or bulk RNA-seq, etc., please use the code below:
 ```
 varFile  <- '. / XXX.MT_variants.txt'  
 MT_variants <- readMTvar(varFile, cellname = "XXX") 
 ```
+
 ### MERCI LOO for real-world application
-**We first show how to run MERCI LOO pipeline, which means there is no reference data of non-receivers provided**  
+**We first show how to run MERCI LOO pipeline to predict mitochondrial receiver cells, which means there is no available reference data of donor and pure non-receiver cells. If the user have reference data, we recommend to use MERCI regular pipeline (see the last section)**  
 Assuming T cells are MT donor cells and the population of cancer cells is a mixture of receivers and non-receivers. In this example data, we mixed 300 CC (receiver) and 500 MC (non-receiver) cancer cells. Load the cell information data:
 ```
 load('. /cell_info.RData')  
