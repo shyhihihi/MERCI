@@ -86,8 +86,9 @@ python MERCI-mtSNP.py -D 10x_mtscATAC-seq \
 ___*Note: If the folder of .bam file does not contain its .bai index file, the user needs first to generate .bai file. For example using a simple command of samtools to create the bam index file: samtools index *.bam.___
 
 ### Output files:
-The output directory contains two main output files: *.MT_variants.txt and *.MT_Coverage.csv file (*.Coverage_Cell.csv for 10x scRNA-seq data).  
-The *.MT_variants.txt contains the annotated information of retrieved mtSNVs, *.MT_Coverage.csv or *.Coverage_Cell.csv records the coverage information in mitochondrial genome for each cell or sample.
+The output directory contains two main output files: *.MT_variants.txt and *.MT_Coverage.csv file (*.Coverage_Cell.csv for 10x scRNA-seq or mtscATAC-seq data).  
+The *.MT_variants.txt contains the annotated information of retrieved mtSNVs, *.MT_Coverage.csv or *.Coverage_Cell.csv file records the coverage information in mitochondrial genome for each cell or sample.
+
 
 
 ## MERCI R package
@@ -103,7 +104,7 @@ After the MERCI package is successfully installed, load the package.
 
 `library(MERCI)`
 
-Read the file of mitochondrial variants (*.MT_variants.txt’) called from MERCI-mtSNP. Here I prepared an example data ‘example.MT_variants.txt’. (User can find the fire in the data directory of this repository)
+Read the file of mitochondrial variants (*.MT_variants.txt’) called from MERCI-mtSNP. Here I prepared an example data ‘example.MT_variants.txt’. (Users can find the dataset of example files in https://github.com/shyhihihi/MERCI/tree/main/data)
 ```
 varFile  <- './example.MT_variants.txt' ;  
 mtSNV_table <- readMTvar_10x(varFile, minReads=1000) ;  
