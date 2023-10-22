@@ -248,5 +248,6 @@ t.stat2
 ![Image text](https://github.com/shyhihihi/MERCI/blob/main/images/MERCIv2_t.stat2.jpg)
 
 
-Compared to the results of prediction without reference data (the results of MERCI LOO pipeline), we can easily find the performance improved significantly with sensitivity = 79%. At the same time, there is nearly no change of precision (85%) and specificity (91%). It is ok for using the MERCI LOO pipeline if the user does not have additional reference data, but MERCI regular are highly recommended if there is reference data for pure non-receivers and pure donor cells.
+Compared to the results of prediction without reference data (the results of MERCI LOO pipeline), we can easily find the performance improved significantly with sensitivity = 79%. At the same time, there is nearly no change of precision (85%) and specificity (91%). 
+Although it is ok for using the MERCI LOO pipeline if the user does not have additional reference data, MERCI regular pipeline is highly recommended if there is reference data for pure non-receivers and pure donor cells.
 
