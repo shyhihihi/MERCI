@@ -154,14 +154,26 @@ Next, we calculate the ‘effective count statistic’(Neff)  of donor cell enri
 
 The parameter ‘adjust’ of Cell_Neff_cal function indicates whether adjusting the count statistics with Neff statistics. when adjust=FALSE, then the original count of observed donor-enriched mtSNV in each candidate receiver cell will be used to calculate the DNA rank. Otherwise, Neff will be used as the count statistic for DNA rank calculation, default=TRUE. Notably, When using Neff to calculate DNA rank score, it will take a long time to get the results depending on the number of ‘mixed_cells’ and the number of ‘mutFeatures’.  
 
-Load gene expression data (the expression matrix must include the MT genes), Using MERCI LOO pipeline to estiamte the relative abundance of transferred MT (decovolution analysis), and RNA rank for each cancer cell.
+Next using MERCI LOO pipeline to estiamte the relative abundance of transferred mitochondria (decovolution analysis)and RNA rank for each input cancer cell.
+
+First Load gene expression data (the expression matrix must include the expression porfiles for MT genes),
 ```
 load('./cell_exp.RData')  
 library(Matrix)  
 cell_exp <- cell_exp[, selected_Cells]  
 RNA_rank <- MERCI_LOO_MT_est(cell_exp, reciever_cells=Cancer_cells, donor_cells=T_cells, organism='mouse')  
 ```
-MERCI_LOO_MT_est will return the estimated MT constitutes for all candidate receiver cells and the transformed RNA ranks. The parameter ‘organism’ must be set accurately, currently, we only support Human and mouse species.  
+MERCI_LOO_MT_est will return the estimated MT constitutes for all candidate receiver cells and the transformed RNA ranks. The parameter ‘organism’ must be assigned accurately, currently, we only support Human and mouse species.  
+The output of MERCI_LOO_MT_est function (here the R object 'RNA_rank') contains the estimated relative fraction of T cell-derived mitochondria (the first column ' Donor_MT_ind') for each input cancer cell.  
+It is easy to find that the relative faction of T cell-derived MT in the real receiver cells (CC cancer cells) is much higher than non-receiver cells (MC cancer cells), see R codes below.
+```
+ture_receiver_cells <- cell_info$cell_name[cell_info$culture_history=='CC_cancer'] ;
+non_receiver_cells <-  cell_info$cell_name[cell_info$culture_history=='MC_cancer'] ;
+boxplot(RNA_rank[ture_receiver_cells, 'Donor_MT_ind'], RNA_rank[non_receiver_cells, 'Donor_MT_ind'], main='The relative abundance of foreign MT', names=c('CC', 'MC') ) 
+```
+![Image text]( https://github.com/shyhihihi/MERCI/blob/main/images/boxplot_CCvsMC.jpeg)
+
+
 Significance estimation to test if true-receivers are included in the input cancer cell population based on Rcm values.
 
 `CellN_stat <- CellNumber_test(DNA_rank, RNA_rank, Number_R=1000)`
