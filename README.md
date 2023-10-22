@@ -251,3 +251,6 @@ t.stat2
 Compared to the results of prediction without reference data (the results of MERCI LOO pipeline), we can easily find the performance improved significantly with sensitivity = 79%. At the same time, there is nearly no change of precision (85%) and specificity (91%).  
 Although it is ok for using the MERCI LOO pipeline if the user does not have additional reference data, MERCI regular pipeline is highly recommended if there is reference data for pure non-receivers and pure donor cells.
 
+### Citation
+If you used MERCI-mtSNP or MERCI R package in your study, please cite our paper:  
+Zhang H, Yu X, Ye J, Li H, Hu J, Tan Y, Fang Y, Akbay E, Yu F, Weng C, Sankaran VG, Bachoo RM, Maher E, Minna J, Zhang A, Li B. Systematic investigation of mitochondrial transfer between cancer cells and T cells at single-cell resolution. Cancer Cell. 2023 Oct 9;41(10):1788-1802.e10. doi: 10.1016/j.ccell.2023.09.003. PMID: 37816332; PMCID: PMC10568073.
