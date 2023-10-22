@@ -178,11 +178,20 @@ Significance estimation to test if true-receivers are included in the input canc
 
 `CellN_stat <- CellNumber_test(DNA_rank, RNA_rank, Number_R=1000)`
 
-The statistic Rcm value will be returned. If there is Rcm >1 at any cutoff, this means receivers are high likely to be sufficiently included in the input mixed cells. Let’s look at the results:
+The statistic Rcm value will be returned. If there is Rcm >1 at any cutoff, this means receivers are high likely to be sufficiently included in the input mixed cells. Let’s look at the results for the example data:
 
 ![Image text]( https://github.com/shyhihihi/MERCI/blob/main/images/MERCIv2_LOO_Rcm.jpeg)
 
-For rank cutoffs at top rank 10-80%, the Rcm is consistent > 1. The captured number of positive calls is significant and non-random, true receivers are thus considered sufficient in the input cancer cells. We next selected a cutoff to predict the MT receivers. Here, we used the cutoff at top rank 50%, which is a good choice to balance the sensitivity, specificity and precision.
+For rank cutoffs at top rank 10-80%, the Rcm values are consistently > 1. This means the captured number of positive calls is significant (p < 0.001) and non-random, true receivers are thus considered sufficient in the input cancer cells.  
+Let's explore the results if there is no ture-receiver within the input cancer cells.
+```
+test.CellN_stat <- CellNumber_test(DNA_rank[non_receiver_cells, ], RNA_rank[non_receiver_cells, ], Number_R=1000)
+```
+![Image text]( https://github.com/shyhihihi/MERCI/blob/main/images/Rcm_nonReceivers.jpeg)
+
+As the figure above shows, there is no Rcm value >1 at any rank cutoff. This means it is highly possible that no real receivers (or no sufficient receivers) are included in the input cell set.
+
+We next selected a rank cutoff to predict the MT receivers. Here, we used the cutoff at top rank 50%, which is a good choice to balance the sensitivity, specificity and precision.
 
 `MTreceiver_pre <- MERCI_ReceiverPre(DNA_rank, RNA_rank, top_rank=50)`
 
@@ -198,7 +207,7 @@ According to the equations blelow:
 Precision=TP/(TP+FP)=226/(226+41)=84.6%  
 Specificity=TN/(TN+FP)=459/(459+41)=91.8%  
 Sensitivity=TP/(TP+FN)=226/(226+74)=75.3%  
-The precision (also called positive predictive value) reached > 84%. Specificity and sensitivity are 92% and 75%. If we selected a more rigorous cutoff (e.g. top 40% or higher), the precision and specificity will increase at the cost of reduced sensitivity.
+The precision (also called positive predictive value) reached > 84%. And the specificity and  the sensitivity are 92% and 75%, respectively. If we selected a more rigorous cutoff (e.g. top 40% or higher), the precision and specificity will increase at the cost of reduced sensitivity.
 
 ### MERCI regular
 **If there is reference data provided, we recommond to use regular MERCI pipeline as isllustrated below:**  
