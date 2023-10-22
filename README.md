@@ -210,8 +210,8 @@ Sensitivity=TP/(TP+FN)=226/(226+74)=75.3%
 The precision (also called positive predictive value) reached > 84%. And the specificity and  the sensitivity are 92% and 75%, respectively. If we selected a more rigorous cutoff (e.g. top 40% or higher), the precision and specificity will increase at the cost of reduced sensitivity.
 
 ### MERCI regular
-**If there is reference data provided, we recommond to use regular MERCI pipeline as isllustrated below:**  
-Load the independent reference data of pure non-receivers of cancer cells (additional MC cells), including the cell annotation data and gene expression data.
+**If there is reference data provided, the prediction performance will be better when using MERCI regular pipeline conpared to MERCI LOO pipeline. Thus we recommond to use regular MERCI pipeline as isllustrated below:**  
+Load the independent reference data for pure non-receivers of cancer cells (additional MC cells), including the cell annotation data and gene expression data.
 ```
 load(‘./cell_info_nonReceivers.RData’)  
 load(‘./cell_exp_nonReceivers.RData’)  
@@ -220,7 +220,7 @@ selected_Cells <- c(T_cells, Cancer_cells, ref_noRe_cells)
 c.genes <- intersect(rownames(cell_exp), rownames(cell_exp_nonReceivers))
 cell_exp2 <- cbind(cell_exp[c.genes, ], cell_exp_nonReceivers[c.genes, ])
 ```
-Read the file of mitochondrial read-coverage based on selected cells, and generate the corresponding vaf matrix for mtSNVs.
+Read the file of mitochondrial read-coverage into R environment based on selected cells, and generate the corresponding vaf matrix for mtSNVs.
 ```
 MTcoverage_inf <- readCoverage_10x(CoverFile, S.cells=selected_Cells)  
 s.mtSNV_table <- mtSNV_table[mtSNV_table$Cell%in%selected_Cells, ]  
@@ -239,7 +239,7 @@ Also, perform significance estimation first to obtain the Rcm statistics.
 `CellN_stat2 <- CellNumber_test(DNA_rank2, RNA_rank2, Number_R=1000)`
 ![Image text]( https://github.com/shyhihihi/MERCI/blob/main/images/MERCIv2_regular_Rcm.jpeg)  
 
-Rcm is consistent > 1 at cutoffs from top rank 10-80%. We next used the same cutoff 50% to predict the mitochondrial receivers.
+Rcm values are consistent > 1 at cutoffs from top rank 10-80%. We next used the same cutoff 50% to predict the mitochondrial receivers.
 ```
 MTreceiver_pre2 <- MERCI_ReceiverPre(DNA_rank2, RNA_rank2, top_rank=50)  
 t.stat2 <- table(cell_info[Cancer_cells, 'culture_history'], MTreceiver_pre2[Cancer_cells, 'prediction'])
@@ -248,5 +248,5 @@ t.stat2
 ![Image text](https://github.com/shyhihihi/MERCI/blob/main/images/MERCIv2_t.stat2.jpg)
 
 
-Compared to the results of prediction without reference data (the results of MERCI LOO pipeline), we can easily find the performance improved significantly with sensitivity = 79%. At the same time, there is nearly no change of precision (85%) and specificity (91%). It is ok for using the MERCI LOO pipeline if the user does not have additional reference data.
+Compared to the results of prediction without reference data (the results of MERCI LOO pipeline), we can easily find the performance improved significantly with sensitivity = 79%. At the same time, there is nearly no change of precision (85%) and specificity (91%). It is ok for using the MERCI LOO pipeline if the user does not have additional reference data, but MERCI regular are highly recommended if there is reference data for pure non-receivers and pure donor cells.
 
