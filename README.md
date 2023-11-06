@@ -109,7 +109,7 @@ mtSNV_table <- readMTvar_10x(varFile, minReads=1000) ;
 ```
 Here, varFile is the path of '*.MT_variants.txt' file, and minReads=1000 indicates that only Cell with MT reads < 1000 will be filtered out. readMTvar_10x  function works only for the variant file of 10x scRNA-seq data. If the user used other datatypes, such as ATAC-seq, smart-seq2 or bulk RNA-seq, etc., please use the code below:
 ```
-varFile  <- '. / XXX.MT_variants.txt'  
+varFile  <- './XXX.MT_variants.txt'  
 MT_variants <- readMTvar(varFile, cellname = "XXX") 
 ```
 
@@ -117,7 +117,7 @@ MT_variants <- readMTvar(varFile, cellname = "XXX")
 **We first show how to run MERCI LOO pipeline to predict mitochondrial receiver cells, which means there is no available reference data of donor and pure non-receiver cells. If the user have reference data, we recommend to use MERCI regular pipeline (see the last section)**  
 Assuming T cells are mitochondrial donor cells and the cancer cell population is a mixture of receivers and non-receivers. In this example data, we mixed 300 CC (receiver) and 500 MC (non-receiver) cancer cells together. Load the cell information data:
 ```
-load('. /cell_info.RData')  
+load('./cell_info.RData')  
 T_cells <- cell_info$cell_name[cell_info$cell_type=='T cell']  
 Cancer_cells <- cell_info$cell_name[cell_info$cell_type=='cancer cell']  
 ```
