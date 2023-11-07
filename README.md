@@ -1,4 +1,4 @@
-# MERCI: tracing of mitochondrion transfer between single cancer and T cells
+# MERCI: tracing of mitochondrial transfer between single cancer and T cells
 MERCI contains two modules:MERCI-mtSNP.py for calling mtSNVs and MERCI R package for predicting the mitochondrial recipient cells and their mitochondrial compositions. 
 
 ## MERCI-mtSNP
