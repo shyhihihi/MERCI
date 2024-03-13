@@ -50,6 +50,17 @@ MERCI_MT_est <- function(cell_exp, mixed_cells, donor_cells, Ref_nonReceivers, o
 	mix_exp <- cell_exp[, mixed_cells] ;
 	marker_M <- mix_exp[s.markers, ] ;
 
+	#
+	tmp.stat <- apply(marker_M, 2, sum) ;
+	zero_cells <- names(tmp.stat)[tmp.stat==0] ;
+	if(length(zero_cells) > 0)
+	{
+		print(paste(length(zero_cells), 'input reciever cells have no expression in any of MT genes, therefore these 5 cells were automaticlly removed!'))
+		marker_M <- marker_M[, setdiff(colnames(marker_R), zero_cells)] ;
+	}
+	#
+	
+
 	#svr
 	library(e1071) ;
 	MTmarker_exp <- marker_M ;
