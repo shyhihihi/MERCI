@@ -234,7 +234,7 @@ DNA_rank2 <- Cell_Neff_cal(varMatrix=mtSNV_ma2, MT_variants=s.mtSNV_table, MT_co
 RNA_rank2 <- MERCI_MT_est(cell_exp2, mixed_cells=Cancer_cells, donor_cells=T_cells, Ref_nonReceivers=ref_noRe_cells, organism='mouse')  
 ```
 
-Also, perform significance estimation first to obtain the Rcm statistics. (Please make sure that the rownames of DNA_rank and RNA_rank are identical.) 
+Also, perform significance estimation first to obtain the Rcm statistics. (Please make sure that the rownames of DNA_rank2 and RNA_rank2 are identical.) 
 
 `CellN_stat2 <- CellNumber_test(DNA_rank2, RNA_rank2, Number_R=1000)`
 ![Image text]( https://github.com/shyhihihi/MERCI/blob/main/images/MERCIv2_regular_Rcm.jpeg)  
