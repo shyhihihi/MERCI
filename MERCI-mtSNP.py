@@ -71,7 +71,31 @@ def WrteSbamfile_10xRNA(path_out, bamfile, CBs, sampleID='S0010', Mquality=255, 
     CB_number = len(s_CBs)
     print('A total of %s reads were written out'% i)
     print('%s cell barcodes have unqiue reads mapping to MT'% CB_number)
-    
+   
+##########################################################################################
+#write the reads of selected cells mapping to MT genome, BD Rhapsody
+##########################################################################################
+def WrteSbamfile_BDRh(path_out, bamfile, CBs, sampleID='S0010', Mquality=255, MTref_name='MT'):  
+    filename = path_out + "/" + sampleID + '.MT.bam'
+    Sfile = pysam.AlignmentFile(filename, 'wb', template=bamfile)
+    i = 0
+    s_CBs = set()
+    for read in bamfile.fetch(MTref_name):
+        if (not read.is_duplicate) and (not read.is_secondary) and (not read.is_supplementary) and (not read.is_unmapped):
+            if read.mapping_quality>=Mquality:
+                if read.has_tag('CB'):
+                    t_CB = read.get_tag(tag='CB')
+                    t_CB=t_CB.replace('_', '')
+                    if t_CB in CBs:
+                        Sfile.write(read)
+                        i += 1
+                        s_CBs.add(t_CB)                    
+    Sfile.close()
+    pysam.index(filename)
+    CB_number = len(s_CBs)
+    print('A total of %s reads were written out'% i)
+    print('%s cell barcodes have unqiue reads mapping to MT'% CB_number)
+
 ##########################################################################################
 #write the high quality reads mapping to MT genome, 10x scATAC-seq
 ##########################################################################################
@@ -169,28 +193,29 @@ def WrteSbamfile(path_out, bamfile, sampleID, Mquality, MTref_name, CBs=None, da
         WrteSbamfile_RNAseq(path_out=path_out, bamfile=bamfile, sampleID=sampleID, Mquality=Mquality, MTref_name=MTref_name)
     if dataType in ['bulk_ATAC-seq', 'scATAC-seq']:
         WrteSbamfile_ATAC(path_out=path_out, bamfile=bamfile, sampleID=sampleID, Mquality=Mquality, MTref_name=MTref_name)
-
-
+    if dataType=='BD-Rhapsody_scRNA-seq':
+        WrteSbamfile_BDRh(path_out=path_out, bamfile=bamfile,  CBs=CBs, sampleID=sampleID, Mquality=Mquality, MTref_name=MTref_name)
 # In[ ]:
 
 ##########################################################################################
-#Return the read List in each cell, 10x
+#Return the read List in each cell, 10x and RD-Rhapsody
 ##########################################################################################
-def ReadCounts_cell(Sfile, MTref_name='MT'):
+def ReadCounts_cell(Sfile, MTref_name='MT', dataType='10x_scRNA-seq'):
     Cell_reads = {}
     for read in Sfile.fetch(MTref_name):
         t_CB = read.get_tag(tag='CB')
+        if dataType=='BD-Rhapsody_scRNA-seq':
+            t_CB=t_CB.replace('_', '')
         if t_CB not in Cell_reads:
             Cell_reads[t_CB] = [read]
         else:
             Cell_reads[t_CB].append(read) 
     return(Cell_reads)
 
-
 # In[ ]:
 
 ##########################################################################################
-#Return the read Number in each cell, 10x
+#Return the read Number in each cell, 10x and RD-Rhapsody
 ##########################################################################################
 def ReadNumber_cell(Cell_reads):
     Read_Num = pd.Series(0, index=list(Cell_reads.keys()))
@@ -203,7 +228,7 @@ def ReadNumber_cell(Cell_reads):
 # In[ ]:
 
 ##########################################################################################
-#Return the read Coverage in each cell, 10x
+#Return the read Coverage in each cell, 10x and RD-Rhapsody
 ##########################################################################################
 def ReadCoverage_cell(Cell_reads, MT_ref, Qcutoff=15):
     Coverage_Cell = pd.DataFrame(columns=list(Cell_reads.keys()))
@@ -246,7 +271,7 @@ def writeCoverage_ATAC(Sfile, path_out, sampleID, Qcutoff=25, MTref_name='chrM')
 # In[ ]:
 
 ##########################################################################################
-#Return the covered genome fraction, 10x
+#Return the covered genome fraction, 10x and RD-Rhapsody
 ##########################################################################################
 def funct(x, length, cutoff=1):
     y = sum(pd.Series(x)>=cutoff)
@@ -308,7 +333,7 @@ def Coverage_stat_ATAC(Sfile, path_out, sampleID, Qcutoff=25, minC=1, MTref_name
 # In[ ]:
 
 ##########################################################################################
-#Return the allele frequency of SNPs for each cell, 10x
+#Return the allele frequency of SNPs for each cell, 10x and RD-Rhapsody
 ##########################################################################################
 def AF_cal(Cell_mutations):
     for t_Cell, SNP_record_ in Cell_mutations.items():
@@ -321,7 +346,7 @@ def AF_cal(Cell_mutations):
         Cell_mutations[t_Cell] = SNP_records
     return(Cell_mutations)
 ##########################################################################################
-#Return the SNPs for each cell, 10x
+#Return the SNPs for each cell, 10x and RD-Rhapsody
 ##########################################################################################
 def SNP_caller_10x(Cell_reads, Coverage_Cell, MT_ref, outpath, sampleID, Qcutoff=15):
     os.chdir(outpath)
@@ -465,7 +490,7 @@ def SNP_caller_ATAC(Sfile, MT_ref, sampleID, path_out, Qcutoff=25, MTref_name='c
 # In[ ]:
 
 ##########################################################################################
-#Write SNPs into txt， 10x
+#Write SNPs into txt， 10x and RD-Rhapsody
 ##########################################################################################
 def SNP_to_txt_10x(Cell_mutations, ReadNumber, coverageF_stat1X, sampleID, outpath):
     os.chdir(outpath)
@@ -526,20 +551,20 @@ def CommandLineParser():
     usage = "python MERCI-mtSNP.py [-D <dataType>] [-o <Directory>] [-S <sampleID>] [-b <path_bam>] [-f <path_fa>] [-c <path_barcodes>] [-M <Mquality>] [-B <Qcutoff>] [-r <Species>] [-l <ln>] [-m <minC>]"
     parser=OptionParser(usage)
     print ('''
-    MERCI-mtSNP version 1.4.0!
+    MERCI-mtSNP version 1.5.0!
     mtSNP calling start...
     parameters setting...
     ''')
-    parser.add_option("-D","--dataType", action="store", dest="dataType", default='10x_scRNA-seq', help="The data type of your sequencing data. One of '10x_scRNA-seq'(default), 'smart-seq2', 'bulk_ATAC-seq', 'scATAC-seq', 'bulk_RNA-seq', or '10x_mtscATAC-seq'")
+    parser.add_option("-D","--dataType", action="store", dest="dataType", default='10x_scRNA-seq', help="The data type of your sequencing data. One of '10x_scRNA-seq'(default), 'smart-seq2', 'bulk_ATAC-seq', 'scATAC-seq', 'bulk_RNA-seq', 'BD-Rhapsody_scRNA-seq', or '10x_mtscATAC-seq'")
     parser.add_option("-o","--output", action="store", dest="Directory", default='./', help="Output directory for intermediate and final outputs.")
     parser.add_option("-S","--sampleID", action="store", dest="sampleID", default='sampleX', help="the sample name, also serve as the name of output file. if not given, the names of all intermeidate or final output files will be automatically set as sampleX")
     parser.add_option("-b","--Bamfile", action="store", dest="path_bam", default='', help="Input bam file for MT mutation calling")
     parser.add_option("-f","--fastafile", action="store", dest="path_fa", default='', help="The genome reference sequence in fasta format, usually named as genome.fa")
-    parser.add_option("-c","--CellBarcode", action="store", dest="path_barcodes", default='None', help="This parameter only work for dataTypes with 10x_scRNA-seq or 10x_mtscATAC-seq, the directory where cell barcodes file (barcodes.tsv.gz or barcodes.tsv) generated by cellranger exists")
+    parser.add_option("-c","--CellBarcode", action="store", dest="path_barcodes", default='None', help="This parameter only work for dataTypes with 10x_scRNA-seq, BD-Rhapsody_scRNA-seq or 10x_mtscATAC-seq, the directory where cell barcodes file (barcodes.tsv.gz or barcodes.tsv) generated by cellranger exists")
     parser.add_option("-M","--MQcutoff", action="store", type="int", dest="Mquality", default='255', help="The lowest alignment quality that are accepted, the reads with alignment scores below the given value will be discarded, default=5 for scATAC-seq, 10x_mtscATAC-seq or bulk_ATAC-seq, default=255 for other dataTypes")    
-    parser.add_option("-B","--BQcutoff", action="store", type="int", dest="Qcutoff", default='15', help="The base qulaity cutoff, only alleles with BQ higher than this value will be retained, default=15 for 10x_scRNA-seq, default=25 for other dataTypes")
+    parser.add_option("-B","--BQcutoff", action="store", type="int", dest="Qcutoff", default='15', help="The base qulaity cutoff, only alleles with BQ higher than this value will be retained, default=15 for 10x_scRNA-seq, BD-Rhapsody_scRNA-seq and 10x_mtscATAC-seq, default=25 for other dataTypes")
     parser.add_option("-r","--ref", action="store", dest="Species", default='human', help="This parameter only works for 10x_mtscATAC-seq dataType, user can set 'human' or 'mouse' depending on what species the sequencing data is, default=mouse")
-    parser.add_option("-l","--ln", action="store", type="int", dest="ln", default='5', help="This parameter only works for 10x_scRNA-seq dataType, the maximum sequence range of snp clusters, reads supporting multiple variants within a small genomic region (ln bp) will be reomved, default=5")
+    parser.add_option("-l","--ln", action="store", type="int", dest="ln", default='5', help="This parameter only works for 10x_scRNA-seq and BD-Rhapsody_scRNA-seq dataTypes, the maximum sequence range of snp clusters, reads supporting multiple variants within a small genomic region (ln bp) will be reomved, default=5")
     parser.add_option("-m","--minC", action="store", type="int", dest="minC", default='1', help="For all data types expcept 10x_scRNA-seq, A threshold for coverage, the faction of MT genome that was covered by read counts no less than than this value will be recorded on the generated coverage figure, default=1")
     return parser.parse_args()
 
@@ -560,18 +585,18 @@ def main():
     ln = opt.ln
     minC = opt.minC
     
-    if dataType not in ['10x_scRNA-seq', 'smart-seq2', 'bulk_ATAC-seq', 'scATAC-seq', 'bulk_RNA-seq', '10x_mtscATAC-seq']:
+    if dataType not in ['10x_scRNA-seq', 'smart-seq2', 'bulk_ATAC-seq', 'scATAC-seq', 'bulk_RNA-seq', '10x_mtscATAC-seq', 'BD-Rhapsody_scRNA-seq']:
         print('Warning: dataType is not assigned or not within supported category')
         
     if dataType in ['scATAC-seq', 'bulk_ATAC-seq', '10x_mtscATAC-seq'] and Mquality==255:
         Mquality=5
-    if dataType != '10x_scRNA-seq' and Qcutoff==15:
+    if dataType not in ['10x_scRNA-seq', 'BD-Rhapsody_scRNA-seq'] and Qcutoff==15:
         Qcutoff=25
     
     bamfile = pysam.AlignmentFile(path_bam, "rb")
     #loading the MT reference genome sequence, 16,569 for human, 16,299 for mouse
     MT_ref = load_MTgenome(path_fa)
-    if dataType in ['10x_scRNA-seq', '10x_mtscATAC-seq']:
+    if dataType in ['10x_scRNA-seq', '10x_mtscATAC-seq', 'BD-Rhapsody_scRNA-seq']:
         CBs = load_CBs(path_barcodes)
     else:
         CBs = None
@@ -590,13 +615,13 @@ def main():
     path_bam2 =  path_out + "/" + sampleID + ".MT.bam"
     Sfile = pysam.AlignmentFile(path_bam2, 'rb')
     
-    #the read List in each cell, 10x rna-seq or 10x mtscATAC-seq
-    if dataType in ['10x_scRNA-seq', '10x_mtscATAC-seq']:
-        Cell_reads = ReadCounts_cell(Sfile, MTref_name=MTref_name)
+    #the read List in each cell, 10x rna-seq, BD-Rhapsody_scRNA-seq or 10x mtscATAC-seq
+    if dataType in ['10x_scRNA-seq', '10x_mtscATAC-seq', 'BD-Rhapsody_scRNA-seq']:
+        Cell_reads = ReadCounts_cell(Sfile, MTref_name=MTref_name, dataType=dataType)
         Read_Num = ReadNumber_cell(Cell_reads)
         print('The median MT read count is %s per cell'% str( np.median(Read_Num) ) )
     #read Coverage in each cell
-    if dataType in ['10x_scRNA-seq', '10x_mtscATAC-seq']:
+    if dataType in ['10x_scRNA-seq', '10x_mtscATAC-seq', 'BD-Rhapsody_scRNA-seq']:
         Coverage_Cell = ReadCoverage_cell(Cell_reads, MT_ref, Qcutoff=Qcutoff)
         os.chdir(path_out)
         filename= sampleID + '.Coverage_Cell'
@@ -607,7 +632,7 @@ def main():
         writeCoverage_ATAC(Sfile, path_out, sampleID, Qcutoff=Qcutoff, MTref_name=MTref_name)
  
     #the covered genome fraction at 1x (or minC x)
-    if dataType in ['10x_scRNA-seq', '10x_mtscATAC-seq']:
+    if dataType in ['10x_scRNA-seq', '10x_mtscATAC-seq', 'BD-Rhapsody_scRNA-seq']:
         lengthMT = len(MT_ref)
         coverageF_stat = CovergeF(Coverage_Cell, path_out, sampleID, lengthMT, minC=minC)
     if dataType in ['smart-seq2', 'bulk_RNA-seq']:
@@ -616,7 +641,7 @@ def main():
         Coverage_stat_ATAC(Sfile, path_out, sampleID, Qcutoff, minC, MTref_name=MTref_name)
 
     #the variant calling for each cell/sample
-    if dataType == '10x_scRNA-seq':
+    if dataType in ['10x_scRNA-seq', 'BD-Rhapsody_scRNA-seq']:
         Cell_mutations = SNP_caller_10x(Cell_reads, Coverage_Cell, MT_ref, path_out, sampleID, Qcutoff=Qcutoff)
         New_Cell_mutations = MTmutations_filters(Cell_mutations, sampleID, ln=ln)
     if dataType == '10x_mtscATAC-seq':
@@ -627,7 +652,7 @@ def main():
         Site_mutations = SNP_caller_ATAC(Sfile, MT_ref, sampleID, path_out, Qcutoff=Qcutoff, MTref_name=MTref_name) 
     
     #Write results into txt
-    if dataType == '10x_scRNA-seq':
+    if dataType in ['10x_scRNA-seq', 'BD-Rhapsody_scRNA-seq']:
         SNP_to_txt_10x(New_Cell_mutations, Read_Num, coverageF_stat, sampleID, path_out)
     elif dataType == '10x_mtscATAC-seq':
         SNP_to_txt_10x(Cell_mutations, Read_Num, coverageF_stat, sampleID, path_out)
